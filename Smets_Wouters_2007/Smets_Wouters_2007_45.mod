@@ -32,6 +32,11 @@
  *  - Note that at the prior mean, [cmap,crhopinf] and [cmaw,crhow] are pairwise collinear. Thus, running identification at the prior
  *      mean will return a warning. But this is only a local issue. These parameters are only indistinguishable at the prior mean, but not 
  *      at different points.
+ *  - In the prior Table 1A in the paper, the 
+ *          - habit parameter $\lambda$ is erroneously labeled h
+ *          - the fixed cost parameter $\phi_p$ is labeled $\Phi$ 
+ *  - Table 1B claims that $\rho_{ga}$ follows a beta prior with B(0.5,0.2^2), but the code shows that it actually
+ *      follows a normal distribution with N(0.5,0.25^2)
  *
  * This file was originally written by Frank Smets and Rafeal Wouters and has been updated by
  * Johannes Pfeifer. 
@@ -101,7 +106,7 @@ var labobs      ${lHOURS}$      (long_name='log hours worked')
     ;    
  
 varexo ea       ${\eta^a}$      (long_name='productivity shock')
-    eb          ${\eta^b}$      (long_name='Investment-specific technology shock')
+    eb          ${\eta^b}$      (long_name='risk premium shock')
     eg          ${\eta^g}$      (long_name='Spending shock')
     eqs         ${\eta^i}$      (long_name='Investment-specific technology shock')
     em          ${\eta^m}$      (long_name='Monetary policy shock')
@@ -146,7 +151,7 @@ parameters curvw ${\varepsilon_w}$  (long_name='Curvature Kimball aggregator wag
     crhoms      ${\rho_r}$          (long_name='persistence monetary policy shock')  
     crhopinf    ${\rho_p}$          (long_name='persistence price markup shock')  
     crhow       ${\rho_w}$          (long_name='persistence wage markup shock')  
-    ctrend      ${\bar \delta}$     (long_name='net growth rate in percent')  
+    ctrend      ${\bar \gamma}$     (long_name='net growth rate in percent')  
     cg          ${\frac{\bar g}{\bar y}}$     (long_name='steady state exogenous spending share')  
     ;
 
@@ -212,7 +217,7 @@ model(linear);
 #cik=(1-(1-ctou)/cgamma)*cgamma;    %i_k: investment-capital ratio
 #clk=((1-calfa)/calfa)*(crk/cw);    %labor to capital ratio
 #cky=cfc*(clk)^(calfa-1);           %k_y: steady state output ratio
-#ciy=cik*cky;                       %consumption-investment ratio
+#ciy=cik*cky;                       %investment-output ratio
 #ccy=1-cg-cik*cky;                  %consumption-output ratio
 #crkky=crk*cky;                     %z_y=R_{*}^k*k_y
 #cwhlc=(1/clandaw)*(1-calfa)/calfa*crk*cky/ccy; %W^{h}_{*}*L_{*}/C_{*} used in c_2 in equation (2)
@@ -395,6 +400,12 @@ calfa,0.24,0.01,1.0,NORMAL_PDF,0.3,0.05;
 end;
 
 varobs dy dc dinve labobs pinfobs dw robs;
+
+prior_function(function='PC_slope');
+PC_slope_vec=cell2mat(oo_.prior_function_results(:,1));
+[f,xi] = ksdensity(PC_slope_vec,'Support','positive');
+figure('Name','Prior Slope of the Phillips Curve')
+plot(xi,f);
 
 estimation(optim=('MaxIter',200),datafile=usmodel_data,mode_file=usmodel_shock_decomp_mode,mode_compute=0,first_obs=1, presample=4,lik_init=2,prefilter=0,mh_replic=0,mh_nblocks=2,mh_jscale=0.20,mh_drop=0.2, nograph, nodiagnostic, tex);
 write_latex_prior_table;  

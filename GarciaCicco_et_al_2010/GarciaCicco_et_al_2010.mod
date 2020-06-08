@@ -11,12 +11,13 @@
  * Notes:
  * - The estimation results reported in Table 3 of the paper are not easily replicable. The authors are currently working on an Erratum. The standard deviations of
  *      the estimated measurement error reported in Table 3 of the paper are actually variances. This mod-file reflects this difference to the publised version
- *      by taking the square root. Additionally, the Hessian at the mode is not well-behaved, because the mode is at a corner solution. According to communications with 
+ *      by taking the square root. Additionally, the Hessian at the mode is not well-behaved, because the mode is at a corner solution. According to comnications with 
  *      GPU, they used a  positive definite approximation to the non-positive inverse Hessian to make the MCMC run. Dynare will in general run into the same problem, unless
  *      mode_compute=6 is used (which is the default in this mod-file). These problems with the Hessian may result in poor convergence of the MCMC, implying that a long chain 
  *      needs to be used (or alternatively, the use_tarb option). However, the main results of the paper are unaffected by these issues.
  * - These problems only affect the estimation. The simulations are fine. Results of stoch_simul have been checked with the moments reported in the replication
  *      code available at the AER homepage
+ * - In accordance with the official replication file r and RSTAR are gross interest rates and not net interest rates as in the paper.
  * - The data are taken from the AER homepage and transformed into log-differences to conform to the observables.
  * - Estimation with 2 million draws takes 6-8 hours, including mode-finding.
  * - Results for most tables can be found in the oo_ structure as documented in the Dynare manual. For example:
@@ -298,28 +299,28 @@ fprintf('%30s \t %5.4f \t %5.4f \t %5.4f \t %5.4f \n','Ex. Spending:',[oo_.varia
 varobs g_y g_c g_invest tb_y;
         
 estimated_params;
-    gbar, , , ,uniform_pdf,(1+1.03)/2,sqrt(12)^(-1)*(1.03-1),1,1.03;
-    stderr eps_g, , , ,uniform_pdf,(0+0.2)/2,sqrt(12)^(-1)*(0.2-0),0,0.2;
-    rho_g, , , ,uniform_pdf,(-0.99+0.99)/2,sqrt(12)^(-1)*(-0.99-0.99),-0.99,0.99;
-    stderr eps_a, , , ,uniform_pdf,(0+0.2)/2,sqrt(12)^(-1)*(0.2-0),0,0.2;
-    rho_a, , , ,uniform_pdf,(-0.99+0.99)/2,sqrt(12)^(-1)*(-0.99-0.99),-0.99,0.99;
-    phi, , , ,uniform_pdf, (0+8)/2, sqrt(12)^(-1)*(0-8), 0, 8;
+    gbar, , , ,uniform_pdf, , , 1,1.03;
+    stderr eps_g, , , ,uniform_pdf, , ,0,0.2;
+    rho_g, , , ,uniform_pdf, , ,-0.99,0.99;
+    stderr eps_a, , , ,uniform_pdf, , ,0,0.2;
+    rho_a, , , ,uniform_pdf, , ,-0.99,0.99;
+    phi, , , ,uniform_pdf, , , 0, 8;
 
     @#if RBC == 0
-        stderr eps_nu, , , ,uniform_pdf,(0+1)/2,sqrt(12)^(-1)*(1-0),0,1; //higher upper bound than the others
-        rho_nu, , , ,uniform_pdf,(-0.99+0.99)/2,sqrt(12)^(-1)*(-0.99-0.99),-0.99,0.99;
-        stderr eps_s, , , ,uniform_pdf,(0+0.2)/2,sqrt(12)^(-1)*(0.2-0),0,0.2;
-        rho_s, , , ,uniform_pdf,(-0.99+0.99)/2,sqrt(12)^(-1)*(-0.99-0.99),-0.99,0.99;
-        stderr eps_mu, , , ,uniform_pdf,(0+0.2)/2,sqrt(12)^(-1)*(0.2-0),0,0.2;
-        rho_mu, , , ,uniform_pdf,(-0.99+0.99)/2,sqrt(12)^(-1)*(-0.99-0.99),-0.99,0.99;
+        stderr eps_nu, , , ,uniform_pdf, , ,0,1; //higher upper bound than the others
+        rho_nu, , , ,uniform_pdf, , ,-0.99,0.99;
+        stderr eps_s, , , ,uniform_pdf, , ,0,0.2;
+        rho_s, , , ,uniform_pdf, , ,-0.99,0.99;
+        stderr eps_mu, , , ,uniform_pdf, , ,0,0.2;
+        rho_mu, , , ,uniform_pdf, , ,-0.99,0.99;
 
-        psi, , , ,uniform_pdf, (0+5)/2, sqrt(12)^(-1)*(0-5), 0, 5;
+        psi, , , ,uniform_pdf,  , , 0, 5;
     @# endif
 
-    stderr g_y, , , ,uniform_pdf, (sqrt(0.0001)+sqrt(0.13))/2,sqrt(12)^(-1)*(sqrt(0.13)-sqrt(0.0001)), sqrt(0.0001), sqrt(0.13);
-    stderr g_c, , , ,uniform_pdf, (sqrt(0.0001)+sqrt(0.19))/2,sqrt(12)^(-1)*(sqrt(0.19)-sqrt(0.0001)), sqrt(0.0001), sqrt(0.19);
-    stderr g_invest, , , ,uniform_pdf, (sqrt(0.0001)+sqrt(0.51))/2,sqrt(12)^(-1)*(sqrt(0.51)-sqrt(0.0001)), sqrt(0.0001), sqrt(0.51);
-    stderr tb_y, , , ,uniform_pdf, (sqrt(0.0001)+sqrt(0.13))/2,sqrt(12)^(-1)*(sqrt(0.13)-sqrt(0.0001)), sqrt(0.0001), sqrt(0.13);
+    stderr g_y, , , ,uniform_pdf, , , sqrt(0.0001), sqrt(0.13);
+    stderr g_c, , , ,uniform_pdf, , , sqrt(0.0001), sqrt(0.19);
+    stderr g_invest, , , ,uniform_pdf, , , sqrt(0.0001), sqrt(0.51);
+    stderr tb_y, , , ,uniform_pdf, ,  , sqrt(0.0001), sqrt(0.13);
 end;
     
 estimated_params_init(use_calibration); //Use their posterior as starting values for estimation; for measurement error, only the 

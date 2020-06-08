@@ -37,8 +37,6 @@ dynare Gali_2015_chapter_7
 dynare Gali_2015_chapter_8
 cd('../Gali_Monacelli_2005')
 dynare Gali_Monacelli_2005
-cd('../Gali_Monacelli_2005')
-dynare Gali_Monacelli_2005
 cd('../Ghironi_Melitz_2005')
 dynare Ghironi_Melitz_2005.mod
 cd('../Jermann_Quadrini_2012/Jermann_Quadrini_2012_RBC')
@@ -53,6 +51,8 @@ dynare RBC_baseline
 dynare RBC_baseline_first_diff_bayesian
 cd('../RBC_baseline_welfare')
 dynare RBC_baseline_welfare
+cd('../RBC_IRF_matching')
+dynare RBC_IRF_matching
 cd('../SGU_2003')
 dynare SGU_2003.mod
 cd('../SGU_2004')
@@ -70,5 +70,7 @@ cd('../Solow_model')
 dynare Solow_SS_transition
 dynare Solow_growth_rate_changes
 dynare Solow_nonstationary
+cd('../Stock_SIR_2020')
+dynare Stock_SIR_2020
 cd('../Woodford_2003')
 dynare Woodford_2003_Chapter_7

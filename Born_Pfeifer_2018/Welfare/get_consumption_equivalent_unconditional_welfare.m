@@ -28,10 +28,11 @@ end
 
 set_param_value('lambda_utility',par_value_lambda) %set consumption equivalent lambda
 if ~options_.ramsey_policy
-    var_list_ = char('Welfare_gap');
-    info = stoch_simul(var_list_); %get decision rules and moments
+    var_list_ = {'Welfare_gap'};
+    [info, oo_, options_] = stoch_simul(M_, options_, oo_, var_list_); %get decision rules and moments
     if info(1) %filter out error code
         outvalue=1e5+par_value_lambda^2;
+        return;
     end
     outvalue=oo_.mean(strmatch('Welfare_gap',var_list_,'exact')); %extract Welfare gap measure
 else
@@ -42,6 +43,7 @@ else
     info = stoch_simul(var_list_);
     if info(1)
         outvalue=1e5+par_value_lambda^2;
+        return;
     end
     betta=M_.params(strmatch('betta',M_.param_names,'exact'));
     outvalue=1/(1-betta)*oo_.mean(strmatch('Utility',var_list_ ,'exact'))-oo_.mean(strmatch('Recursive_natural_welfare_equivalent',var_list_,'exact'));
